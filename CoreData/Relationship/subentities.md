@@ -20,6 +20,7 @@ Imagine an app that needs to display **countries** and **continents** in the sam
 This setup allows a single fetch request for the `Region` entity to return both `Country` and `Continent` instances.
 
 ---
+ 
 
 ### How to Implement Subentities
 
@@ -36,6 +37,7 @@ final class Region: NSManagedObject {}
 
 While not mandatory, defining a class allows you to set the result type of fetch requests for `Region` and interact with it programmatically.
 
+<img width="589" alt="Screenshot 2024-12-12 at 8 03 26 PM" src="https://github.com/user-attachments/assets/5b9451c0-d8d6-4d2d-8e3e-53bfe93093ce" />
 ---
 
 ### Independent Class and Entity Hierarchies
