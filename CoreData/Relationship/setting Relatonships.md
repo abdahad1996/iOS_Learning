@@ -90,6 +90,7 @@ extension Managed where Self: NSManagedObject {
 
 ### **Optimizing Fetching: `findOrFetch`**
 
+The two-step approach used by 􏰀ndOrFetch(in:matching:) — checking in memory before executing a fetch request — is a performance optimization. In our case, chances are good that we’ve already loaded the country object into memory before. Even traversing a large array of in-memory objects is way faster than executing a fetch request, which round trips all the way to the file system
 This method minimizes database queries by checking in-memory objects first.
 
 ```swift
@@ -119,6 +120,8 @@ extension Managed where Self: NSManagedObject {
 ---
 
 ### **Fetching Materialized Objects**
+Here we use two more helper methods on the Managed protocol that are worth noting: materializedObject(in:matching:) iterates over the context’s registeredObjects set, which contains all managed objects the context currently knows about. It does this until it finds one that isn’t a fault (more on this in a bit),
+
 
 This method iterates over the context's registered objects to find one that matches the predicate.
 
@@ -139,6 +142,8 @@ extension Managed where Self: NSManagedObject {
 #### Key Details:
 - **Avoids Faults**: Only evaluates objects already loaded into memory.
 - **Efficient**: Prevents triggering expensive round trips to the persistent store.
+
+The important aspect here is that we only consider objects that aren’t faults in the iteration. A fault is a managed object instance that’s not populated with data yet (see the chapter about accessing data for more details). If we’d try to evaluate our predicate on faults, we’d potentially force Core Data to make a round trip to the persistent store for each fault, in order to fill in the missing data — something that could be very expensive.
 
 ---
 
@@ -163,25 +168,40 @@ static func findOrCreateContinent(for isoCountry: ISO3166.Country, in context: N
 
 ### **Mutating To-Many Relationships**
 
+we only establish relationships from the to-one side of our one-to-many relationships by simply setting the object on the other side on the relationship property. Of course, you can also mutate a relationship from the other end, i.e. change what’s in the to-many side of the relationship. The most straightforward way to do this is to get a mutable set for the relationship property and make the change you want.
+
 To mutate a **to-many** relationship, use a mutable set or ordered set:
 
 #### Example: Adding a Mood to a Country
+
+For example, we could add the following private property on the Country class to mutate the moods relationship (we don’t need this in our example but will include it for the sake of demonstration):
+
+
 ```swift
 fileprivate var mutableMoods: NSMutableSet {
     return mutableSetValue(forKey: #keyPath(moods))
 }
+
+The moods relationship is still exposed to the rest of the world as an immutable set, but
+internally we can use this mutable version to, for example, add a new mood object:
 
 // Add a mood
 mutableMoods.add(mood)
 ```
 
 #### Ordered Relationships
+
+The same approach works for ordered to-many relationships as well. You just have to use mutableOrderedSetValue(forKey:) instead of mutableSetValue(forKey:).
+
+
 For ordered relationships, use `mutableOrderedSetValue(forKey:)`:
 
 ```swift
 fileprivate var orderedMoods: NSMutableOrderedSet {
     return mutableOrderedSetValue(forKey: #keyPath(moods))
 }
+
+
 
 // Add an ordered mood
 orderedMoods.add(mood)
