@@ -39,7 +39,6 @@ The project is split into three distinct modules:
 ---
 
 ### **Class and Framework Structure**
-<img width="594" alt="Screenshot 2024-12-16 at 5 34 16 PM" src="https://github.com/user-attachments/assets/f50c757a-99b8-4ccf-b4b7-f15dff5e729a" />
 
 #### **1. `SyncCoordinator` Class**
 - The entry point for the sync module.
