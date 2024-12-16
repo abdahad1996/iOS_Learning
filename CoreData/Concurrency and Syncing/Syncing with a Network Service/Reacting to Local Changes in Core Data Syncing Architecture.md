@@ -3,6 +3,7 @@
 The syncing architecture for Core Data ensures that **local changes** (whether initiated by the UI or sync processes) are properly identified, processed, and propagated to a backend (e.g., CloudKit). This approach minimizes complexity and guarantees data consistency across contexts and sessions.
 
 ---
+<img width="557" alt="Screenshot 2024-12-16 at 6 04 36 PM" src="https://github.com/user-attachments/assets/fbd935ed-962c-4e07-935d-e219ee7bd59c" />
 
 ### **Key Concepts**
 
